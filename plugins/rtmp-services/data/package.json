@@ -5,6 +5,10 @@
 		{
 			"name": "services.json",
 			"version": 118
+		},
+		{
+			"name": "services_ramp.json",
+			"version": 118
 		}
 	]
 }

@@ -3128,6 +3128,8 @@ void OBSBasic::TimedCheckForUpdates()
 
 void OBSBasic::CheckForUpdates(bool manualUpdate)
 {
+	return;
+
 #ifdef UPDATE_SPARKLE
 	trigger_sparkle_update();
 #elif _WIN32

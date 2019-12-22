@@ -31,7 +31,8 @@ const char *get_module_name(void)
 
 static bool confirm_service_file(void *param, struct file_download_data *file)
 {
-	if (astrcmpi(file->name, "services.json") == 0) {
+	//if (astrcmpi(file->name, "services.json") == 0) {
+	if (astrcmpi(file->name, "services_ramp.json") == 0) {
 		obs_data_t *data;
 		int format_version;
 

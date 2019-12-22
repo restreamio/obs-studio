@@ -1,0 +1,344 @@
+{
+    "format_version": 2,
+    "services": [
+        {
+            "name": "Restream.io - RTMP",
+            "alt_names": [
+                "Restream.io"
+            ],
+            "common": true,
+            "servers": [
+                {
+                    "name": "Autodetect",
+                    "url": "rtmp://live.restream.io/live"
+                },
+                {
+                    "name": "EU-West (London, GB)",
+                    "url": "rtmp://london.restream.io/live"
+                },
+                {
+                    "name": "EU-West (Amsterdam, NL)",
+                    "url": "rtmp://amsterdam.restream.io/live"
+                },
+                {
+                    "name": "EU-West (Luxembourg)",
+                    "url": "rtmp://luxembourg.restream.io/live"
+                },
+                {
+                    "name": "EU-West (Paris, FR)",
+                    "url": "rtmp://paris.restream.io/live"
+                },
+                {
+                    "name": "EU-West (Milan, IT)",
+                    "url": "rtmp://milan.restream.io/live"
+                },
+                {
+                    "name": "EU-Central (Frankfurt, DE)",
+                    "url": "rtmp://frankfurt.restream.io/live"
+                },
+                {
+                    "name": "EU-East (Falkenstein, DE)",
+                    "url": "rtmp://falkenstein.restream.io/live"
+                },
+                {
+                    "name": "EU-South (Madrid, Spain)",
+                    "url": "rtmp://madrid.restream.io/live"
+                },
+                {
+                    "name": "Russia (Moscow)",
+                    "url": "rtmp://moscow.restream.io/live"
+                },
+                {
+                    "name": "Turkey (Istanbul)",
+                    "url": "rtmp://istanbul.restream.io/live"
+                },
+                {
+                    "name": "Israel (Tel Aviv)",
+                    "url": "rtmp://telaviv.restream.io/live"
+                },
+                {
+                    "name": "US-West (Seattle, WA)",
+                    "url": "rtmp://seattle.restream.io/live"
+                },
+                {
+                    "name": "US-West (San Jose, CA)",
+                    "url": "rtmp://sanjose.restream.io/live"
+                },
+                {
+                    "name": "US-Central (Dallas, TX)",
+                    "url": "rtmp://dallas.restream.io/live"
+                },
+                {
+                    "name": "US-East (Washington, DC)",
+                    "url": "rtmp://washington.restream.io/live"
+                },
+                {
+                    "name": "US-East (Miami, FL)",
+                    "url": "rtmp://miami.restream.io/live"
+                },
+                {
+                    "name": "US-East (Chicago, IL)",
+                    "url": "rtmp://chicago.restream.io/live"
+                },
+                {
+                    "name": "NA-East (Toronto, Canada)",
+                    "url": "rtmp://toronto.restream.io/live"
+                },
+                {
+                    "name": "SA (Saint Paul, Brazil)",
+                    "url": "rtmp://saopaulo.restream.io/live"
+                },
+                {
+                    "name": "India (Bangalore)",
+                    "url": "rtmp://bangalore.restream.io/live"
+                },
+                {
+                    "name": "Asia (Singapore)",
+                    "url": "rtmp://singapore.restream.io/live"
+                },
+                {
+                    "name": "Asia (Seoul, South Korea)",
+                    "url": "rtmp://seoul.restream.io/live"
+                },
+                {
+                    "name": "Asia (Tokyo, Japan)",
+                    "url": "rtmp://tokyo.restream.io/live"
+                },
+                {
+                    "name": "Australia (Sydney)",
+                    "url": "rtmp://sydney.restream.io/live"
+                }
+            ],
+            "recommended": {
+                "keyint": 2
+            }
+        },
+        {
+            "name": "Restream.io - FTL",
+            "common": true,
+            "servers": [
+                {
+                    "name": "Autodetect",
+                    "url": "live.restream.io"
+                },
+                {
+                    "name": "EU-West (London, GB)",
+                    "url": "london.restream.io"
+                },
+                {
+                    "name": "EU-West (Amsterdam, NL)",
+                    "url": "amsterdam.restream.io"
+                },
+                {
+                    "name": "EU-West (Luxembourg)",
+                    "url": "luxembourg.restream.io"
+                },
+                {
+                    "name": "EU-West (Paris, FR)",
+                    "url": "paris.restream.io"
+                },
+                {
+                    "name": "EU-West (Milan, IT)",
+                    "url": "milan.restream.io"
+                },
+                {
+                    "name": "EU-Central (Frankfurt, DE)",
+                    "url": "frankfurt.restream.io"
+                },
+                {
+                    "name": "EU-East (Falkenstein, DE)",
+                    "url": "falkenstein.restream.io"
+                },
+                {
+                    "name": "EU-South (Madrid, Spain)",
+                    "url": "madrid.restream.io"
+                },
+                {
+                    "name": "Russia (Moscow)",
+                    "url": "moscow.restream.io"
+                },
+                {
+                    "name": "Turkey (Istanbul)",
+                    "url": "istanbul.restream.io"
+                },
+                {
+                    "name": "Israel (Tel Aviv)",
+                    "url": "telaviv.restream.io"
+                },
+                {
+                    "name": "US-West (Seattle, WA)",
+                    "url": "seattle.restream.io"
+                },
+                {
+                    "name": "US-West (San Jose, CA)",
+                    "url": "sanjose.restream.io"
+                },
+                {
+                    "name": "US-Central (Dallas, TX)",
+                    "url": "dallas.restream.io"
+                },
+                {
+                    "name": "US-East (Washington, DC)",
+                    "url": "washington.restream.io"
+                },
+                {
+                    "name": "US-East (Miami, FL)",
+                    "url": "miami.restream.io"
+                },
+                {
+                    "name": "US-East (Chicago, IL)",
+                    "url": "chicago.restream.io"
+                },
+                {
+                    "name": "NA-East (Toronto, Canada)",
+                    "url": "toronto.restream.io"
+                },
+                {
+                    "name": "SA (Saint Paul, Brazil)",
+                    "url": "saopaulo.restream.io"
+                },
+                {
+                    "name": "India (Bangalore)",
+                    "url": "bangalore.restream.io"
+                },
+                {
+                    "name": "Asia (Singapore)",
+                    "url": "singapore.restream.io"
+                },
+                {
+                    "name": "Asia (Seoul, South Korea)",
+                    "url": "seoul.restream.io"
+                },
+                {
+                    "name": "Asia (Tokyo, Japan)",
+                    "url": "tokyo.restream.io"
+                },
+                {
+                    "name": "Australia (Sydney)",
+                    "url": "sydney.restream.io"
+                }
+            ],
+            "recommended": {
+                "keyint": 2,
+                "output": "ftl_output",
+                "max audio bitrate": 160,
+                "max video bitrate": 10000,
+                "profile": "main",
+                "bframes": 0
+            }
+        },
+        {
+            "name": "Restream.io - RAMP",
+            "alt_names": [
+                "Restream.io"
+            ],
+            "common": true,
+            "servers": [
+                {
+                    "name": "Autodetect",
+                    "url": "live.restream.io:10000"
+                },
+                {
+                    "name": "EU-West (London, GB)",
+                    "url": "london.restream.io:10000"
+                },
+                {
+                    "name": "EU-West (Amsterdam, NL)",
+                    "url": "amsterdam.restream.io:10000"
+                },
+                {
+                    "name": "EU-West (Luxembourg)",
+                    "url": "luxembourg.restream.io:10000"
+                },
+                {
+                    "name": "EU-West (Paris, FR)",
+                    "url": "paris.restream.io:10000"
+                },
+                {
+                    "name": "EU-West (Milan, IT)",
+                    "url": "milan.restream.io:10000"
+                },
+                {
+                    "name": "EU-Central (Frankfurt, DE)",
+                    "url": "frankfurt.restream.io:10000"
+                },
+                {
+                    "name": "EU-East (Falkenstein, DE)",
+                    "url": "falkenstein.restream.io:10000"
+                },
+                {
+                    "name": "EU-South (Madrid, Spain)",
+                    "url": "madrid.restream.io:10000"
+                },
+                {
+                    "name": "Russia (Moscow)",
+                    "url": "moscow.restream.io:10000"
+                },
+                {
+                    "name": "Turkey (Istanbul)",
+                    "url": "istanbul.restream.io:10000"
+                },
+                {
+                    "name": "Israel (Tel Aviv)",
+                    "url": "telaviv.restream.io:10000"
+                },
+                {
+                    "name": "US-West (Seattle, WA)",
+                    "url": "seattle.restream.io:10000"
+                },
+                {
+                    "name": "US-West (San Jose, CA)",
+                    "url": "sanjose.restream.io:10000"
+                },
+                {
+                    "name": "US-Central (Dallas, TX)",
+                    "url": "dallas.restream.io:10000"
+                },
+                {
+                    "name": "US-East (Washington, DC)",
+                    "url": "washington.restream.io:10000"
+                },
+                {
+                    "name": "US-East (Miami, FL)",
+                    "url": "miami.restream.io:10000"
+                },
+                {
+                    "name": "US-East (Chicago, IL)",
+                    "url": "chicago.restream.io:10000"
+                },
+                {
+                    "name": "NA-East (Toronto, Canada)",
+                    "url": "toronto.restream.io:10000"
+                },
+                {
+                    "name": "SA (Saint Paul, Brazil)",
+                    "url": "saopaulo.restream.io:10000"
+                },
+                {
+                    "name": "India (Bangalore)",
+                    "url": "bangalore.restream.io:10000"
+                },
+                {
+                    "name": "Asia (Singapore)",
+                    "url": "singapore.restream.io:10000"
+                },
+                {
+                    "name": "Asia (Seoul, South Korea)",
+                    "url": "seoul.restream.io:10000"
+                },
+                {
+                    "name": "Asia (Tokyo, Japan)",
+                    "url": "tokyo.restream.io:10000"
+                },
+                {
+                    "name": "Australia (Sydney)",
+                    "url": "sydney.restream.io:10000"
+                }
+            ],
+            "recommended": {
+                "keyint": 2,
+                "output": "ramp_output"
+            }
+        }
+    ]
+}
