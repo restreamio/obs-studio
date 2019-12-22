@@ -65,7 +65,7 @@ static string currentLogFile;
 static string lastLogFile;
 static string lastCrashLogFile;
 
-bool portable_mode = true;
+bool portable_mode = false;
 static bool multi = false;
 static bool log_verbose = false;
 static bool unfiltered_log = false;
