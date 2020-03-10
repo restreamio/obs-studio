@@ -487,7 +487,10 @@ RTMP_GetDuration(RTMP *r)
 int
 RTMP_IsConnected(RTMP *r)
 {
-    return r->m_sb.sb_socket != INVALID_SOCKET;
+    if(r->m_bCustomIsConnected && r->m_customIsConnectedFunc)
+        return r->m_customIsConnectedFunc(r, r->m_customIsConnectedParam);
+    else
+        return r->m_sb.sb_socket != INVALID_SOCKET;
 }
 
 SOCKET
@@ -1075,7 +1078,12 @@ RTMP_Connect(RTMP *r, RTMPPacket *cp)
         }
     }
 
-    if (!RTMP_Connect0(r, (struct sockaddr *)&service, addrlen))
+    if (r->m_bCustomConnect && r->m_customConnectFunc)
+    {
+        if (!r->m_customConnectFunc(&r, (struct sockaddr *)&service, addrlen, r->m_customConnectParam))
+            return FALSE;
+    }
+    else if (!RTMP_Connect0(r, (struct sockaddr *)&service, addrlen))
         return FALSE;
 
     r->m_bSendCounter = TRUE;
@@ -1483,7 +1491,14 @@ ReadN(RTMP *r, char *buffer, int n)
             avail = r->m_sb.sb_size;
             if (avail == 0)
             {
-                if (RTMPSockBuf_Fill(&r->m_sb) < 1)
+                if (r->m_bCustomRecv && r->m_customRecvFunc)
+                {
+                    r->m_sb.sb_start = r->m_sb.sb_buf;
+                    int max_len = (int)sizeof(r->m_sb.sb_buf) - 1;
+                    int recv_len = r->m_customRecvFunc(&r->m_sb, r->m_sb.sb_start, max_len, r->m_customRecvParam);
+                    r->m_sb.sb_size = recv_len>=0 ? recv_len : 0;
+                }
+                else if (RTMPSockBuf_Fill(&r->m_sb) < 1)
                 {
                     if (!r->m_sb.sb_timedout)
                         RTMP_Close(r);

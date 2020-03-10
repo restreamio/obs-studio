@@ -393,7 +393,10 @@ extern "C"
         int addrLen;
     } RTMP_BINDINFO;
 
-    typedef int (*CUSTOMSEND)(RTMPSockBuf*, const char *, int, void*);
+    typedef int (*CUSTOMCONNECT)(void*, struct sockaddr*, socklen_t, void*);
+    typedef int(*CUSTOMISCONNECTED)(void*, void*);
+    typedef int (*CUSTOMSEND)(RTMPSockBuf*, const char*, int, void*);
+    typedef int (*CUSTOMRECV)(RTMPSockBuf*, const char*, int, void*);
 
     typedef struct RTMP
     {
@@ -416,6 +419,16 @@ extern "C"
         uint8_t m_bSendCounter;
 
         uint8_t m_bUseNagle;
+
+        uint8_t m_bCustomConnect;
+        void*   m_customConnectParam;
+        CUSTOMCONNECT m_customConnectFunc;
+        uint8_t m_bCustomIsConnected;
+        void*   m_customIsConnectedParam;
+        CUSTOMISCONNECTED m_customIsConnectedFunc;
+        uint8_t m_bCustomRecv;
+        void*   m_customRecvParam;
+        CUSTOMRECV m_customRecvFunc;
         uint8_t m_bCustomSend;
         void*   m_customSendParam;
         CUSTOMSEND m_customSendFunc;
