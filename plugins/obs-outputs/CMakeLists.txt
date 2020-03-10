@@ -146,7 +146,8 @@ set(obs-outputs_HEADERS
 	rtmp-helpers.h
 	rtmp-stream.h
 	net-if.h
-	flv-mux.h)
+	flv-mux.h
+	ramp-stream.h)
 set(obs-outputs_SOURCES
 	obs-outputs.c
 	null-output.c
@@ -154,7 +155,8 @@ set(obs-outputs_SOURCES
 	rtmp-windows.c
 	flv-output.c
 	flv-mux.c
-	net-if.c)
+	net-if.c
+	ramp-stream.c)
 
 if(WIN32)
 	set(MODULE_DESCRIPTION "OBS output module")
