@@ -14,15 +14,13 @@
 #include "rtmp-helpers.h"
 #include "net-if.h"
 
-
 #ifdef _WIN32
 #include <Iphlpapi.h>
 #else
 #include <sys/ioctl.h>
 #endif
 
-#define do_log(level, format, ...) \
-	blog(level, "[ramp] " format, ##__VA_ARGS__)
+#define do_log(level, format, ...) blog(level, "[ramp] " format, ##__VA_ARGS__)
 
 #define warn(format, ...) do_log(LOG_WARNING, format, ##__VA_ARGS__)
 #define info(format, ...) do_log(LOG_INFO, format, ##__VA_ARGS__)
@@ -142,7 +140,6 @@ typedef struct ramp_stream_int {
 	pthread_t thread;
 #endif
 } ramp_stream_int;
-
 
 typedef struct ramp_stream {
 	obs_output_t *output;

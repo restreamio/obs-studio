@@ -35,7 +35,6 @@ const int RAMP_PID_UPPER_LIMIT = 0xF000;
 const int RAMP_PID_UPPER_DECREASE = 0x8000;
 const int RAMP_PID_QUEUE_SIZE = 0x2000;
 
-
 // Ramp base functions
 
 static struct ramp_packet_int *
@@ -52,9 +51,7 @@ ramp_alloc_udp_packet(ramp_stream_int *stream_int, unsigned short pid,
 	return pkt;
 }
 
-
 static unsigned char *ramp_crypt_buffer = NULL;
-
 
 static unsigned char *ramp_encrypt(ramp_stream_int *stream_int,
 				   unsigned char *buffer, int size, bool crypt)
@@ -73,7 +70,6 @@ static unsigned char *ramp_encrypt(ramp_stream_int *stream_int,
 	return ramp_crypt_buffer;
 }
 
-
 static unsigned char *ramp_decrypt(ramp_stream_int *stream_int,
 				   unsigned char *buffer, int size)
 {
@@ -88,7 +84,6 @@ static unsigned char *ramp_decrypt(ramp_stream_int *stream_int,
 
 	return ramp_crypt_buffer[2] == cs ? ramp_crypt_buffer : NULL;
 }
-
 
 static bool ramp_send_udp_packet(struct ramp_stream_int *stream_int,
 				 struct ramp_packet_int *pkt, bool add)
@@ -236,7 +231,6 @@ static bool ramp_send_udp_packet(struct ramp_stream_int *stream_int,
 	return true;
 }
 
-
 static void ramp_resesend_udp_req(ramp_stream_int *stream,
 				  unsigned short *pid_set, int pid_count)
 {
@@ -286,7 +280,6 @@ static void ramp_resesend_udp_req(ramp_stream_int *stream,
 	//debug("Resend request, count=%d, from pid=%d, total=%d", pid_count, (int)*pid_set, total);
 }
 
-
 static bool ramp_resesend_udp_collected(ramp_stream_int *stream)
 {
 	if (!stream->resend)
@@ -323,7 +316,6 @@ static bool ramp_resesend_udp_collected(ramp_stream_int *stream)
 	return true;
 }
 
-
 static void ramp_stream_send_test(ramp_stream_int *stream)
 {
 	for (int i = 0; i < 2; i++) {
@@ -354,7 +346,6 @@ static void ramp_stream_send_test(ramp_stream_int *stream)
 	}
 }
 
-
 static void ramp_confirm_udp(ramp_stream_int *stream, unsigned short pid)
 {
 	if (!stream->tp_sent_last)
@@ -384,7 +375,6 @@ static void ramp_confirm_udp(ramp_stream_int *stream, unsigned short pid)
 
 	//info("Confirm pid=%d, removed pkt count=%d", (int)pid, count);
 }
-
 
 static bool ramp_check_connection(ramp_stream_int *stream)
 {
@@ -423,7 +413,6 @@ static bool ramp_check_connection(ramp_stream_int *stream)
 	return false;
 }
 
-
 static void ramp_fec_state(ramp_stream_int *stream, bool fec)
 {
 	if (stream->fec != fec) {
@@ -431,7 +420,6 @@ static void ramp_fec_state(ramp_stream_int *stream, bool fec)
 		info("FEC, state=%s", fec ? "enabled" : "disabled");
 	}
 }
-
 
 /*
 static inline AVal *flv_str(AVal *enc, const char *str) {
@@ -468,7 +456,6 @@ static inline void enc_str(char **enc, char *end, const char *str) {
 }
 */
 
-
 static inline void set_aval(AVal *val, const char *str)
 {
 	bool valid = (str && *str);
@@ -476,14 +463,12 @@ static inline void set_aval(AVal *val, const char *str)
 	val->av_len = valid ? (int)strlen(str) : 0;
 }
 
-
 #define MILLISECOND_DEN 1000
 
 static int32_t get_ms_time(struct encoder_packet *packet, int64_t val)
 {
 	return (int32_t)(val * MILLISECOND_DEN / packet->timebase_den);
 }
-
 
 #ifdef _WIN32
 static DWORD WINAPI ramp_thread(LPVOID data)
@@ -621,7 +606,7 @@ static void *ramp_thread(void *data)
 						    ramp_packet_int_header_size),
 					res >> 1);
 				break;
-				
+
 			case 5: // confirm received
 				ramp_confirm_udp(
 					stream_int,
@@ -800,7 +785,6 @@ static void *ramp_thread(void *data)
 #endif
 }
 
-
 // Output integration functions
 
 bool ramp_send_meta(ramp_stream_int *stream_int, int index, char *codec,
@@ -899,7 +883,6 @@ bool ramp_send_meta(ramp_stream_int *stream_int, int index, char *codec,
 	return res;
 }
 
-
 int ramp_send_video(ramp_stream_int *stream_int, int index, bool header,
 		    bool keyframe, int32_t timestamp, int32_t pts_offset,
 		    void *data, int size)
@@ -981,7 +964,6 @@ int ramp_send_video(ramp_stream_int *stream_int, int index, bool header,
 	return ret;
 }
 
-
 int ramp_send_audio(ramp_stream_int *stream_int, int index, bool header,
 		    int32_t timestamp, void *data, int size)
 {
@@ -1060,8 +1042,8 @@ int ramp_send_audio(ramp_stream_int *stream_int, int index, bool header,
 	return ret;
 }
 
-
-int ramp_rtmp_custom_connect(RTMP *r, struct sockaddr *addr, socklen_t addrlen, void *param)
+int ramp_rtmp_custom_connect(RTMP *r, struct sockaddr *addr, socklen_t addrlen,
+			     void *param)
 {
 	ramp_stream_int *stream_int = (ramp_stream_int *)param;
 	if (!stream_int || !stream_int->alive)
@@ -1069,7 +1051,6 @@ int ramp_rtmp_custom_connect(RTMP *r, struct sockaddr *addr, socklen_t addrlen, 
 
 	return TRUE;
 }
-
 
 int ramp_rtmp_custom_is_connected(RTMP *r, void *param)
 {
@@ -1080,21 +1061,22 @@ int ramp_rtmp_custom_is_connected(RTMP *r, void *param)
 	return TRUE;
 }
 
-
 int ramp_rtmp_custom_send(RTMPSockBuf *sock_buf, const char *buffer, int size,
-		  void *param)
+			  void *param)
 {
 	ramp_stream_int *stream_int = (ramp_stream_int *)param;
-	if (!stream_int || !stream_int->alive || size > stream_int->int_recv_buffer_size)
+	if (!stream_int || !stream_int->alive ||
+	    size > stream_int->int_recv_buffer_size)
 		return -1;
 
-	while(true)
-	{
+	while (true) {
 		if (!stream_int->alive)
 			return -1;
 
 		//TODO Add max waiting time
-		if (!sock_buf || size <= stream_int->int_recv_buffer_size - stream_int->int_recv_buffer_used)
+		if (!sock_buf ||
+		    size <= stream_int->int_recv_buffer_size -
+				    stream_int->int_recv_buffer_used)
 			break;
 
 		msleep(1);
@@ -1131,20 +1113,19 @@ int ramp_rtmp_custom_send(RTMPSockBuf *sock_buf, const char *buffer, int size,
 	return size;
 }
 
-
-int ramp_rtmp_custom_recv(RTMPSockBuf *sock_buf, const char *buffer, int size, void *param)
+int ramp_rtmp_custom_recv(RTMPSockBuf *sock_buf, const char *buffer, int size,
+			  void *param)
 {
 	ramp_stream_int *stream_int = (ramp_stream_int *)param;
 	if (!stream_int)
 		return -1;
 
-	while(true)
-	{
+	while (true) {
 		if (!stream_int->alive)
 			return -1;
 
 		//TODO Add max waiting time
-		if(!sock_buf || stream_int->int_send_buffer_used)
+		if (!sock_buf || stream_int->int_send_buffer_used)
 			break;
 
 		msleep(1);
@@ -1184,12 +1165,10 @@ int ramp_rtmp_custom_recv(RTMPSockBuf *sock_buf, const char *buffer, int size, v
 	return res_size;
 }
 
-
 //bool ramp_isalive(ramp_stream_int *stream_int)
 //{
 //	return stream_int && stream_int->alive;
 //}
-
 
 void ramp_disconnect(ramp_stream_int *stream_int)
 {
@@ -1207,7 +1186,6 @@ void ramp_disconnect(ramp_stream_int *stream_int)
 		stream_int->alive = false;
 	}
 }
-
 
 void ramp_stop(ramp_stream_int **param)
 {
@@ -1296,7 +1274,6 @@ void ramp_stop(ramp_stream_int **param)
 
 	info("Stop");
 }
-
 
 ramp_stream_int *ramp_start(const char *url, const char *key,
 			    const char *username, const char *password)
@@ -1510,7 +1487,8 @@ ramp_stream_int *ramp_start(const char *url, const char *key,
 
 	stream_int->rtmp->m_bCustomIsConnected = 1;
 	stream_int->rtmp->m_customIsConnectedParam = stream_int;
-	stream_int->rtmp->m_customIsConnectedFunc = ramp_rtmp_custom_is_connected;
+	stream_int->rtmp->m_customIsConnectedFunc =
+		ramp_rtmp_custom_is_connected;
 
 	stream_int->rtmp->m_bCustomRecv = 1;
 	stream_int->rtmp->m_customRecvParam = stream_int;
@@ -1538,7 +1516,6 @@ ramp_stream_int *ramp_start(const char *url, const char *key,
 	return stream_int;
 }
 
-
 #ifndef SEC_TO_NSEC
 #define SEC_TO_NSEC 1000000000ULL
 #endif
@@ -1557,16 +1534,13 @@ ramp_stream_int *ramp_start(const char *url, const char *key,
 #define MIN_ESTIMATE_DURATION_MS 1000
 #define MAX_ESTIMATE_DURATION_MS 2000
 
-
 static const char *ramp_stream_getname(void *unused)
 {
 	UNUSED_PARAMETER(unused);
 	return obs_module_text("RAMP");
 }
 
-
 static inline size_t num_buffered_packets(struct ramp_stream *stream);
-
 
 static inline void free_packets(struct ramp_stream *stream)
 {
@@ -1586,30 +1560,25 @@ static inline void free_packets(struct ramp_stream *stream)
 	pthread_mutex_unlock(&stream->packets_mutex);
 }
 
-
 static inline bool stopping(struct ramp_stream *stream)
 {
 	return os_event_try(stream->stop_event) != EAGAIN;
 }
-
 
 static inline bool connecting(struct ramp_stream *stream)
 {
 	return os_atomic_load_bool(&stream->connecting);
 }
 
-
 static inline bool active(struct ramp_stream *stream)
 {
 	return os_atomic_load_bool(&stream->active);
 }
 
-
 static inline bool disconnected(struct ramp_stream *stream)
 {
 	return os_atomic_load_bool(&stream->disconnected);
 }
-
 
 static void ramp_stream_destroy(void *param)
 {
@@ -1640,7 +1609,6 @@ static void ramp_stream_destroy(void *param)
 
 	bfree(stream);
 }
-
 
 static void *ramp_stream_create(obs_data_t *settings, obs_output_t *output)
 {
@@ -1692,7 +1660,6 @@ fail:
 	return NULL;
 }
 
-
 static void ramp_stream_stop(void *data, uint64_t ts)
 {
 	struct ramp_stream *stream = data;
@@ -1719,7 +1686,6 @@ static void ramp_stream_stop(void *data, uint64_t ts)
 	ramp_stop(&stream->stream_int);
 }
 
-
 static inline void set_ramp_str(AVal *val, const char *str)
 {
 	bool valid = (str && *str);
@@ -1727,14 +1693,12 @@ static inline void set_ramp_str(AVal *val, const char *str)
 	val->av_len = valid ? (int)strlen(str) : 0;
 }
 
-
 static inline void set_ramp_dstr(AVal *val, struct dstr *str)
 {
 	bool valid = !dstr_is_empty(str);
 	val->av_val = valid ? str->array : NULL;
 	val->av_len = valid ? (int)str->len : 0;
 }
-
 
 static inline bool get_next_packet(struct ramp_stream *stream,
 				   struct encoder_packet *packet)
@@ -1764,7 +1728,8 @@ static int send_packet(struct ramp_stream *stream,
 	char buf[8192];
 
 	while (true) {
-		ret = ramp_rtmp_custom_recv(NULL, buf, sizeof(buf), stream->stream_int);
+		ret = ramp_rtmp_custom_recv(NULL, buf, sizeof(buf),
+					    stream->stream_int);
 		if (ret < 0)
 			return -1;
 		if (!ret)
@@ -1798,9 +1763,7 @@ static int send_packet(struct ramp_stream *stream,
 	return ret;
 }
 
-
 static inline bool send_headers(struct ramp_stream *stream);
-
 
 static inline bool can_shutdown_stream(struct ramp_stream *stream,
 				       struct encoder_packet *packet)
@@ -1814,7 +1777,6 @@ static inline bool can_shutdown_stream(struct ramp_stream *stream,
 
 	return timeout || packet->sys_dts_usec >= (int64_t)stream->stop_ts;
 }
-
 
 static void set_output_error(struct ramp_stream *stream)
 {
@@ -1874,7 +1836,6 @@ static void set_output_error(struct ramp_stream *stream)
 	obs_output_set_last_error(stream->output, msg);
 }
 
-
 static void dbr_add_frame(struct ramp_stream *stream, struct dbr_frame *back)
 {
 	struct dbr_frame front;
@@ -1906,9 +1867,7 @@ static void dbr_add_frame(struct ramp_stream *stream, struct dbr_frame *back)
 	}
 }
 
-
 static void dbr_set_bitrate(struct ramp_stream *stream);
-
 
 static void *send_thread(void *data)
 {
@@ -1998,7 +1957,6 @@ static void *send_thread(void *data)
 	return NULL;
 }
 
-
 static inline double encoder_bitrate(obs_encoder_t *encoder)
 {
 	obs_data_t *settings = obs_encoder_get_settings(encoder);
@@ -2007,7 +1965,6 @@ static inline double encoder_bitrate(obs_encoder_t *encoder)
 	obs_data_release(settings);
 	return bitrate;
 }
-
 
 static bool send_meta_data(struct ramp_stream *stream, size_t idx, bool *next)
 {
@@ -2052,7 +2009,6 @@ static bool send_meta_data(struct ramp_stream *stream, size_t idx, bool *next)
 	return success;
 }
 
-
 static bool send_audio_header(struct ramp_stream *stream, size_t idx,
 			      bool *next)
 {
@@ -2073,7 +2029,6 @@ static bool send_audio_header(struct ramp_stream *stream, size_t idx,
 	return send_packet(stream, &packet, true, idx) >= 0;
 }
 
-
 static bool send_video_header(struct ramp_stream *stream)
 {
 	obs_output_t *context = stream->output;
@@ -2088,7 +2043,6 @@ static bool send_video_header(struct ramp_stream *stream)
 	packet.size = obs_parse_avc_header(&packet.data, header, size);
 	return send_packet(stream, &packet, true, 0) >= 0;
 }
-
 
 static inline bool send_headers(struct ramp_stream *stream)
 {
@@ -2109,13 +2063,11 @@ static inline bool send_headers(struct ramp_stream *stream)
 	return true;
 }
 
-
 static inline bool reset_semaphore(struct ramp_stream *stream)
 {
 	os_sem_destroy(stream->send_sem);
 	return os_sem_init(&stream->send_sem, 0) == 0;
 }
-
 
 static int init_send(struct ramp_stream *stream)
 {
@@ -2144,7 +2096,6 @@ static int init_send(struct ramp_stream *stream)
 
 	return OBS_OUTPUT_SUCCESS;
 }
-
 
 static bool init_connect(struct ramp_stream *stream)
 {
@@ -2223,7 +2174,6 @@ static bool init_connect(struct ramp_stream *stream)
 	return true;
 }
 
-
 static void *connect_thread(void *data)
 {
 	struct ramp_stream *stream = data;
@@ -2273,7 +2223,6 @@ static void *connect_thread(void *data)
 	return NULL;
 }
 
-
 static bool ramp_stream_start(void *data)
 {
 	struct ramp_stream *stream = data;
@@ -2293,7 +2242,6 @@ static bool ramp_stream_start(void *data)
 			      stream) == 0;
 }
 
-
 static inline bool add_packet(struct ramp_stream *stream,
 			      struct encoder_packet *packet)
 {
@@ -2302,12 +2250,10 @@ static inline bool add_packet(struct ramp_stream *stream,
 	return true;
 }
 
-
 static inline size_t num_buffered_packets(struct ramp_stream *stream)
 {
 	return stream->packets.size / sizeof(struct encoder_packet);
 }
-
 
 static void drop_frames(struct ramp_stream *stream, const char *name,
 			int highest_priority, bool pframes)
@@ -2356,7 +2302,6 @@ static void drop_frames(struct ramp_stream *stream, const char *name,
 #endif
 }
 
-
 static bool find_first_video_packet(struct ramp_stream *stream,
 				    struct encoder_packet *first)
 {
@@ -2373,7 +2318,6 @@ static bool find_first_video_packet(struct ramp_stream *stream,
 
 	return false;
 }
-
 
 static bool dbr_bitrate_lowered(struct ramp_stream *stream)
 {
@@ -2414,7 +2358,6 @@ static bool dbr_bitrate_lowered(struct ramp_stream *stream)
 	return true;
 }
 
-
 static void dbr_set_bitrate(struct ramp_stream *stream)
 {
 	obs_encoder_t *vencoder = obs_output_get_video_encoder(stream->output);
@@ -2425,7 +2368,6 @@ static void dbr_set_bitrate(struct ramp_stream *stream)
 
 	obs_data_release(settings);
 }
-
 
 static void dbr_inc_bitrate(struct ramp_stream *stream)
 {
@@ -2442,7 +2384,6 @@ static void dbr_inc_bitrate(struct ramp_stream *stream)
 		     stream->dbr_cur_bitrate);
 	}
 }
-
 
 static void check_to_drop_frames(struct ramp_stream *stream, bool pframes)
 {
@@ -2509,7 +2450,6 @@ static void check_to_drop_frames(struct ramp_stream *stream, bool pframes)
 	}
 }
 
-
 static bool add_video_packet(struct ramp_stream *stream,
 			     struct encoder_packet *packet)
 {
@@ -2526,7 +2466,6 @@ static bool add_video_packet(struct ramp_stream *stream,
 	stream->last_dts_usec = packet->dts_usec;
 	return add_packet(stream, packet);
 }
-
 
 static void ramp_stream_data(void *data, struct encoder_packet *packet)
 {
@@ -2572,7 +2511,6 @@ static void ramp_stream_data(void *data, struct encoder_packet *packet)
 		obs_encoder_packet_release(&new_packet);
 }
 
-
 static void ramp_stream_defaults(obs_data_t *defaults)
 {
 	obs_data_set_default_int(defaults, OPT_DROP_THRESHOLD, 700);
@@ -2582,7 +2520,6 @@ static void ramp_stream_defaults(obs_data_t *defaults)
 	obs_data_set_default_bool(defaults, OPT_NEWSOCKETLOOP_ENABLED, false);
 	obs_data_set_default_bool(defaults, OPT_LOWLATENCY_ENABLED, false);
 }
-
 
 static obs_properties_t *ramp_stream_properties(void *unused)
 {
@@ -2618,13 +2555,11 @@ static obs_properties_t *ramp_stream_properties(void *unused)
 	return props;
 }
 
-
 static uint64_t ramp_stream_total_bytes_sent(void *data)
 {
 	struct ramp_stream *stream = data;
 	return stream->total_bytes_sent;
 }
-
 
 static int ramp_stream_dropped_frames(void *data)
 {
@@ -2632,20 +2567,17 @@ static int ramp_stream_dropped_frames(void *data)
 	return stream->dropped_frames;
 }
 
-
 static float ramp_stream_congestion(void *data)
 {
 	struct ramp_stream *stream = data;
 	return stream->min_priority > 0 ? 1.0f : stream->congestion;
 }
 
-
 static int ramp_stream_connect_time(void *data)
 {
 	struct ramp_stream *stream = data;
 	return stream->stream_int->rtmp->connect_time_ms;
 }
-
 
 struct obs_output_info ramp_output_info = {
 	.id = "ramp_output",
