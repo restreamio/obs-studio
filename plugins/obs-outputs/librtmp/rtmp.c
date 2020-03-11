@@ -4364,6 +4364,16 @@ RTMP_Close(RTMP *r)
     }
 
     memset (&r->m_bindIP, 0, sizeof(r->m_bindIP));
+    
+    r->m_bCustomConnect = 0;
+    r->m_customConnectFunc = NULL;
+    r->m_customConnectParam = NULL;
+    r->m_bCustomIsConnected = 0;
+    r->m_customIsConnectedFunc = NULL;
+    r->m_customIsConnectedParam = NULL;
+    r->m_bCustomRecv = 0;
+    r->m_customRecvFunc = NULL;
+    r->m_customRecvParam = NULL;
     r->m_bCustomSend = 0;
     r->m_customSendFunc = NULL;
     r->m_customSendParam = NULL;

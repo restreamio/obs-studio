@@ -8,9 +8,9 @@
 #include <util/threading.h>
 
 //#include "flv-mux.h"
-#include "librtmp\rtmp.h"
-#include "librtmp\log.h"
-#include "librtmp\rtmp_sys.h"
+#include "librtmp/rtmp.h"
+#include "librtmp/log.h"
+#include "librtmp/rtmp_sys.h"
 #include "rtmp-helpers.h"
 #include "net-if.h"
 
