@@ -34,6 +34,7 @@ private:
 
 	RestreamAuth *restreamAuth;
 	QString selectedBroadcastId;
+	bool broadcastReady;
 	bool valid = false;
 	QIcon thumbPlaceholder;
 };

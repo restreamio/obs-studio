@@ -18,8 +18,8 @@ const QString IndexOfGamingCategory = "20";
 OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadcastReady)
 	: QDialog(parent),
 	  ui(new Ui::OBSRestreamActions),
-	  restreamAuth(dynamic_cast<RestreamAuth *>(auth))
-//broadcastReady(broadcastReady)
+	  restreamAuth(dynamic_cast<RestreamAuth *>(auth)),
+	  broadcastReady(broadcastReady)
 {
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	ui->setupUi(this);
