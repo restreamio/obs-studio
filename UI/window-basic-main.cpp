@@ -68,6 +68,9 @@
 #include "window-youtube-actions.hpp"
 #include "youtube-api-wrappers.hpp"
 #endif
+#ifdef RESTREAM_ENABLED
+#include "window-restream-actions.hpp"
+#endif
 #include "window-whats-new.hpp"
 #include "context-bar-controls.hpp"
 #include "obs-proxy-style.hpp"
@@ -6474,6 +6477,35 @@ void OBSBasic::ShowYouTubeAutoStartWarning()
 }
 #endif
 
+#ifdef RESTREAM_ENABLED
+void OBSBasic::RestreamActionDialogOk(const QString &broadcast_id, const QString &key, bool start_now)
+{
+	//blog(LOG_DEBUG, "Stream key: %s", QT_TO_UTF8(key));
+	obs_service_t *service_obj = GetService();
+	OBSDataAutoRelease settings = obs_service_get_settings(service_obj);
+
+	const std::string a_key = QT_TO_UTF8(key);
+	obs_data_set_string(settings, "key", a_key.c_str());
+
+	const std::string e_id = QT_TO_UTF8(broadcast_id);
+	obs_data_set_string(settings, "broadcast_id", e_id.c_str());
+	//obs_data_set_string(settings, "stream_id", e_id.c_str());
+
+	auto *restreamAuth = dynamic_cast<RestreamAuth *>(GetAuth());
+	restreamAuth->UseBroadcastKey(key);
+
+	obs_service_update(service_obj, settings);
+	autoStartBroadcast = true;
+	autoStopBroadcast = true;
+	broadcastReady = true;
+
+	emit BroadcastStreamReady(broadcastReady);
+
+	if (start_now)
+		QMetaObject::invokeMethod(this, "StartStreaming");
+}
+#endif
+
 void OBSBasic::StartStreaming()
 {
 	if (outputHandler->StreamingActive())
@@ -6621,12 +6653,23 @@ void OBSBasic::SetBroadcastFlowEnabled(bool enabled)
 
 void OBSBasic::SetupBroadcast()
 {
-#ifdef YOUTUBE_ENABLED
+#if defined YOUTUBE_ENABLED || defined RESTREAM_ENABLED
 	Auth *const auth = GetAuth();
+#endif
+#ifdef YOUTUBE_ENABLED
 	if (IsYouTubeService(auth->service())) {
 		OBSYoutubeActions dialog(this, auth, broadcastReady);
 		connect(&dialog, &OBSYoutubeActions::ok, this, &OBSBasic::YouTubeActionDialogOk);
 		dialog.exec();
+		return;
+	}
+#endif
+#ifdef RESTREAM_ENABLED
+	if (IsRestreamService(auth->service())) {
+		OBSRestreamActions dialog(this, auth, broadcastReady);
+		connect(&dialog, &OBSRestreamActions::ok, this, &OBSBasic::RestreamActionDialogOk);
+		dialog.exec();
+		return;
 	}
 #endif
 }

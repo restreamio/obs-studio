@@ -49,6 +49,7 @@ set(
   forms/OBSRemux.ui
   forms/OBSUpdate.ui
   forms/OBSYoutubeActions.ui
+  forms/OBSRestreamActions.ui
   forms/source-toolbar/browser-source-toolbar.ui
   forms/source-toolbar/color-source-toolbar.ui
   forms/source-toolbar/device-select-toolbar.ui
