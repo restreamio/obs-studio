@@ -126,7 +126,7 @@ try {
 	bool success;
 
 	auto func = [&]() {
-		auto url = QString("%1/events/upcoming").arg(RESTREAM_API_URL);
+		auto url = QString("%1/events/upcoming?source=2&sort=scheduled").arg(RESTREAM_API_URL);
 		success = GetRemoteFile(url.toUtf8(), output, error, nullptr, "application/json", "", nullptr, headers,
 					nullptr, 5);
 	};
@@ -154,6 +154,7 @@ try {
 		event.id = QString::fromStdString(item["id"].string_value());
 		event.title = QString::fromStdString(item["title"].string_value());
 		event.scheduledFor = item["scheduledFor"].is_number() ? item["scheduledFor"].int_value() : 0;
+		event.showId = QString::fromStdString(item["showId"].string_value());
 		broadcast_out.push_back(event);
 	}
 
@@ -231,9 +232,24 @@ try {
 	return false;
 }
 
-void RestreamAuth::UseBroadcastKey(QString key)
+void RestreamAuth::UseBroadcastKey(QString key, QString show_id)
 {
 	key_ = key.toUtf8();
+
+	if (chatWidgetBrowser) {
+		auto url = QString("https://restream.io/chat-application?show_id=%1").arg(show_id);
+		chatWidgetBrowser->setURL(url.toStdString());
+	}
+
+	if (titlesWidgetBrowser) {
+		auto url = QString("https://restream.io/titles/embed?show_id=%1").arg(show_id);
+		titlesWidgetBrowser->setURL(url.toStdString());
+	}
+
+	if (channelWidgetBrowser) {
+		auto url = QString("https://restream.io/channel/embed?show_id=%1").arg(show_id);
+		channelWidgetBrowser->setURL(url.toStdString());
+	}
 }
 
 void RestreamAuth::SaveInternal()
@@ -257,9 +273,12 @@ bool RestreamAuth::LoadInternal()
 
 void RestreamAuth::LoadUI()
 {
-	if (!cef)
-		return;
 	if (uiLoaded)
+		return;
+
+#ifdef BROWSER_AVAILABLE
+
+	if (!cef)
 		return;
 	if (!SetMainChannelKey())
 		return;
@@ -267,7 +286,7 @@ void RestreamAuth::LoadUI()
 	OBSBasic::InitBrowserPanelSafeBlock();
 	OBSBasic *main = OBSBasic::Get();
 
-	QCefWidget *browser;
+	// QCefWidget *browser;
 	std::string url;
 	std::string script;
 
@@ -285,8 +304,8 @@ void RestreamAuth::LoadUI()
 	chat->setWindowTitle(QTStr("Auth.Chat"));
 	chat->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	browser = cef->create_widget(chat, url, panel_cookies);
-	chat->SetWidget(browser);
+	chatWidgetBrowser = cef->create_widget(chat, url, panel_cookies);
+	chat->SetWidget(chatWidgetBrowser);
 
 	main->AddDockWidget(chat, Qt::RightDockWidgetArea);
 
@@ -301,8 +320,8 @@ void RestreamAuth::LoadUI()
 	info->setWindowTitle(QTStr("Auth.StreamInfo"));
 	info->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	browser = cef->create_widget(info, url, panel_cookies);
-	info->SetWidget(browser);
+	titlesWidgetBrowser = cef->create_widget(info, url, panel_cookies);
+	info->SetWidget(titlesWidgetBrowser);
 
 	main->AddDockWidget(info, Qt::LeftDockWidgetArea);
 
@@ -317,8 +336,8 @@ void RestreamAuth::LoadUI()
 	channels->setWindowTitle(QTStr("RestreamAuth.Channels"));
 	channels->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-	browser = cef->create_widget(channels, url, panel_cookies);
-	channels->SetWidget(browser);
+	channelWidgetBrowser = cef->create_widget(channels, url, panel_cookies);
+	channels->SetWidget(channelWidgetBrowser);
 
 	main->AddDockWidget(channels, Qt::LeftDockWidgetArea);
 
@@ -343,6 +362,7 @@ void RestreamAuth::LoadUI()
 		if (main->isVisible() || !main->isMaximized())
 			main->restoreState(dockState);
 	}
+#endif
 
 	uiLoaded = true;
 }

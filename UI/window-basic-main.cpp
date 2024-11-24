@@ -6478,7 +6478,7 @@ void OBSBasic::ShowYouTubeAutoStartWarning()
 #endif
 
 #ifdef RESTREAM_ENABLED
-void OBSBasic::RestreamActionDialogOk(const QString &broadcast_id, const QString &key, bool start_now)
+void OBSBasic::RestreamActionDialogOk(const QString &broadcast_id, const QString &key, const QString show_id, bool start_now)
 {
 	//blog(LOG_DEBUG, "Stream key: %s", QT_TO_UTF8(key));
 	obs_service_t *service_obj = GetService();
@@ -6492,7 +6492,7 @@ void OBSBasic::RestreamActionDialogOk(const QString &broadcast_id, const QString
 	//obs_data_set_string(settings, "stream_id", e_id.c_str());
 
 	auto *restreamAuth = dynamic_cast<RestreamAuth *>(GetAuth());
-	restreamAuth->UseBroadcastKey(key);
+	restreamAuth->UseBroadcastKey(key, show_id);
 
 	obs_service_update(service_obj, settings);
 	autoStartBroadcast = true;

@@ -74,6 +74,8 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 			label->style()->polish(label);
 
 			selectedBroadcastId = event.id;
+			selectedShowId = event.showId;
+
 			UpdateOkButtonStatus();
 		});
 
@@ -97,7 +99,7 @@ void OBSRestreamActions::BroadcastSelectAction()
 		return;
 	}
 
-	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), false);
+	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), false);
 	accept();
 }
 
@@ -108,6 +110,6 @@ void OBSRestreamActions::BroadcastSelectAndStartAction()
 		return;
 	}
 
-	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), true);
+	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), true);
 	accept();
 }
