@@ -237,17 +237,17 @@ void RestreamAuth::UseBroadcastKey(QString key, QString show_id)
 	key_ = key.toUtf8();
 
 	if (chatWidgetBrowser) {
-		auto url = QString("https://restream.io/chat-application?show_id=%1").arg(show_id);
+		auto url = QString("https://restream.io/chat-application?show-id=%1").arg(show_id);
 		chatWidgetBrowser->setURL(url.toStdString());
 	}
 
 	if (titlesWidgetBrowser) {
-		auto url = QString("https://restream.io/titles/embed?show_id=%1").arg(show_id);
+		auto url = QString("https://restream.io/titles/embed?show-id=%1").arg(show_id);
 		titlesWidgetBrowser->setURL(url.toStdString());
 	}
 
 	if (channelWidgetBrowser) {
-		auto url = QString("https://restream.io/channel/embed?show_id=%1").arg(show_id);
+		auto url = QString("https://restream.io/channel/embed?show-id=%1").arg(show_id);
 		channelWidgetBrowser->setURL(url.toStdString());
 	}
 }
@@ -286,7 +286,6 @@ void RestreamAuth::LoadUI()
 	OBSBasic::InitBrowserPanelSafeBlock();
 	OBSBasic *main = OBSBasic::Get();
 
-	// QCefWidget *browser;
 	std::string url;
 	std::string script;
 
