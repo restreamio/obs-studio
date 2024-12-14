@@ -136,9 +136,8 @@ try {
 	headers.push_back(std::string("Client-ID: ") + client_id);
 	headers.push_back(std::move(auth));
 
-	auto url = id.isEmpty() || id == "default"
-		? QString("%1/streamKey").arg(RESTREAM_API_URL)
-		: QString("%1/events/%2/streamKey").arg(RESTREAM_API_URL, id);
+	auto url = id.isEmpty() || id == "default" ? QString("%1/streamKey").arg(RESTREAM_API_URL)
+						   : QString("%1/events/%2/streamKey").arg(RESTREAM_API_URL, id);
 
 	std::string output;
 	std::string error;
