@@ -45,63 +45,6 @@ RestreamAuth::~RestreamAuth()
 	main->RemoveDockWidget(RESTREAM_CHANNELS_DOCK_NAME);
 }
 
-bool RestreamAuth::SetMainChannelKey()
-try {
-	std::string client_id = RESTREAM_CLIENTID;
-	deobfuscate_str(&client_id[0], RESTREAM_HASH);
-
-	if (!GetToken(RESTREAM_TOKEN_URL, client_id, RESTREAM_SCOPE_VERSION))
-		return false;
-	if (token.empty())
-		return false;
-	if (!key_.empty())
-		return true;
-
-	std::string auth;
-	auth += "Authorization: Bearer ";
-	auth += token;
-
-	std::vector<std::string> headers;
-	headers.push_back(std::string("Client-ID: ") + client_id);
-	headers.push_back(std::move(auth));
-
-	std::string output;
-	std::string error;
-	Json json;
-	bool success;
-
-	auto func = [&]() {
-		auto url = QString("%1/streamKey").arg(RESTREAM_API_URL);
-		success = GetRemoteFile(url.toUtf8(), output, error, nullptr, "application/json", "", nullptr, headers,
-					nullptr, 5);
-	};
-
-	ExecThreadedWithoutBlocking(func, QTStr("Auth.LoadingChannel.Title"),
-				    QTStr("Auth.LoadingChannel.Text").arg(service()));
-	if (!success || output.empty())
-		throw ErrorInfo("Failed to get stream key from remote", error);
-
-	json = Json::parse(output, error);
-	if (!error.empty())
-		throw ErrorInfo("Failed to parse json", error);
-
-	error = json["error"].string_value();
-	if (!error.empty())
-		throw ErrorInfo(error, json["error_description"].string_value());
-
-	key_ = json["streamKey"].string_value();
-
-	return true;
-} catch (ErrorInfo info) {
-	QString title = QTStr("Auth.ChannelFailure.Title");
-	QString text = QTStr("Auth.ChannelFailure.Text").arg(service(), info.message.c_str(), info.error.c_str());
-
-	QMessageBox::warning(OBSBasic::Get(), title, text);
-
-	blog(LOG_WARNING, "%s: %s: %s", __FUNCTION__, info.message.c_str(), info.error.c_str());
-	return false;
-}
-
 bool RestreamAuth::GetBroadcastInfo(QVector<RestreamEventDescription> &broadcast_out)
 try {
 	std::string client_id = RESTREAM_CLIENTID;
@@ -193,7 +136,9 @@ try {
 	headers.push_back(std::string("Client-ID: ") + client_id);
 	headers.push_back(std::move(auth));
 
-	auto url = QString("%1/events/%2/streamKey").arg(RESTREAM_API_URL, id);
+	auto url = id.isEmpty() || id == "default"
+		? QString("%1/streamKey").arg(RESTREAM_API_URL)
+		: QString("%1/events/%2/streamKey").arg(RESTREAM_API_URL, id);
 
 	std::string output;
 	std::string error;
@@ -208,7 +153,7 @@ try {
 	ExecThreadedWithoutBlocking(func, QTStr("Auth.LoadingChannel.Title"),
 				    QTStr("Auth.LoadingChannel.Text").arg(service()));
 	if (!success || output.empty())
-		throw ErrorInfo("Failed to get the event key from remote", error);
+		throw ErrorInfo("Failed to get the stream key from remote", error);
 
 	json = Json::parse(output, error);
 	if (!error.empty())
@@ -234,22 +179,40 @@ try {
 
 void RestreamAuth::UseBroadcastKey(QString key, QString show_id)
 {
+	if (QString::fromStdString(key_) == key && currentShowId == show_id)
+		return;
+
 	key_ = key.toUtf8();
+	currentShowId = show_id;
 
 	if (chatWidgetBrowser) {
-		auto url = QString("https://restream.io/chat-application?show-id=%1").arg(show_id);
+		auto url = QString("https://restream.io/chat-application");
+		if (!show_id.isEmpty())
+			url.append(QString("?show-id=%1").arg(show_id));
+
 		chatWidgetBrowser->setURL(url.toStdString());
 	}
 
 	if (titlesWidgetBrowser) {
-		auto url = QString("https://restream.io/titles/embed?show-id=%1").arg(show_id);
+		auto url = QString("https://restream.io/titles/embed");
+		if (!show_id.isEmpty())
+			url.append(QString("?show-id=%1").arg(show_id));
+
 		titlesWidgetBrowser->setURL(url.toStdString());
 	}
 
 	if (channelWidgetBrowser) {
-		auto url = QString("https://restream.io/channel/embed?show-id=%1").arg(show_id);
+		auto url = QString("https://restream.io/channel/embed");
+		if (!show_id.isEmpty())
+			url.append(QString("?show-id=%1").arg(show_id));
+
 		channelWidgetBrowser->setURL(url.toStdString());
 	}
+}
+
+QString RestreamAuth::GetCurrentShowId()
+{
+	return currentShowId;
 }
 
 void RestreamAuth::SaveInternal()
@@ -280,8 +243,12 @@ void RestreamAuth::LoadUI()
 
 	if (!cef)
 		return;
-	if (!SetMainChannelKey())
+
+	QString key;
+	if (!GetBroadcastKey("default", key))
 		return;
+
+	UseBroadcastKey(key, "");
 
 	OBSBasic::InitBrowserPanelSafeBlock();
 	OBSBasic *main = OBSBasic::Get();
@@ -398,11 +365,12 @@ std::shared_ptr<Auth> RestreamAuth::Login(QWidget *parent, const std::string &)
 	if (!auth->GetToken(RESTREAM_TOKEN_URL, client_id, RESTREAM_SCOPE_VERSION, QT_TO_UTF8(login.GetCode())))
 		return nullptr;
 
-	std::string error;
-	if (auth->SetMainChannelKey())
-		return auth;
+	QString key;
+	if (!auth->GetBroadcastKey("default", key))
+		return nullptr;
 
-	return nullptr;
+	auth->UseBroadcastKey(key, "");
+	return auth;
 }
 
 static std::shared_ptr<Auth> CreateRestreamAuth()

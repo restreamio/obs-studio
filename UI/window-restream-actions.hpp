@@ -28,6 +28,7 @@ public:
 private:
 	void BroadcastSelectAction();
 	void BroadcastSelectAndStartAction();
+	void OpenRestreamDashboard();
 
 	QIcon GetPlaceholder() { return thumbPlaceholder; }
 	void SetPlaceholder(const QIcon &icon) { thumbPlaceholder = icon; }

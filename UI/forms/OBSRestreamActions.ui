@@ -133,7 +133,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2,4">
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,2,3">
         <property name="spacing">
          <number>10</number>
         </property>
@@ -144,6 +144,13 @@
          <widget class="QPushButton" name="cancelButton">
           <property name="text">
            <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="dashboardButton">
+          <property name="text">
+           <string>Restream.Actions.DashboardButton</string>
           </property>
          </widget>
         </item>

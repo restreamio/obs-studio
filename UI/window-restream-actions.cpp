@@ -11,10 +11,6 @@
 #include <QStandardPaths>
 #include <QImageReader>
 
-const QString SchedulDateAndTimeFormat = "yyyy-MM-dd'T'hh:mm:ss'Z'";
-const QString RepresentSchedulDateAndTimeFormat = "dddd, MMMM d, yyyy h:m";
-const QString IndexOfGamingCategory = "20";
-
 OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadcastReady)
 	: QDialog(parent),
 	  ui(new Ui::OBSRestreamActions),
@@ -28,6 +24,7 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 
 	connect(ui->okButton, &QPushButton::clicked, this, &OBSRestreamActions::BroadcastSelectAndStartAction);
 	connect(ui->saveButton, &QPushButton::clicked, this, &OBSRestreamActions::BroadcastSelectAction);
+	connect(ui->dashboardButton, &QPushButton::clicked, this, &OBSRestreamActions::OpenRestreamDashboard);
 	connect(ui->cancelButton, &QPushButton::clicked, this, [&]() {
 		blog(LOG_DEBUG, "Restream live event creation cancelled.");
 		reject();
@@ -37,9 +34,15 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 
 	QVector<RestreamEventDescription> events;
 	if (!restreamAuth->GetBroadcastInfo(events)) {
-		reject();
-		return;
+		RestreamEventDescription event;
+		event.id = QString("default");
+		event.title = QString("Live with Restream");
+		event.scheduledFor = 0;
+		event.showId = QString("");
+		events.push_back(event);
 	}
+
+	auto currentShowId = restreamAuth->GetCurrentShowId();
 
 	for (auto event : events) {
 		ClickableLabel *label = new ClickableLabel();
@@ -80,6 +83,17 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 		});
 
 		ui->scrollAreaWidgetContents->layout()->addWidget(label);
+
+		if (broadcastReady && event.showId == currentShowId) {
+			label->setProperty("class", "row-selected");
+			label->style()->unpolish(label);
+			label->style()->polish(label);
+
+			selectedBroadcastId = event.id;
+			selectedShowId = event.showId;
+
+			UpdateOkButtonStatus();
+		}
 	}
 }
 
@@ -95,9 +109,8 @@ void OBSRestreamActions::UpdateOkButtonStatus()
 void OBSRestreamActions::BroadcastSelectAction()
 {
 	QString streamKey;
-	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey)) {
+	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey))
 		return;
-	}
 
 	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), false);
 	accept();
@@ -106,10 +119,14 @@ void OBSRestreamActions::BroadcastSelectAction()
 void OBSRestreamActions::BroadcastSelectAndStartAction()
 {
 	QString streamKey;
-	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey)) {
+	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey))
 		return;
-	}
 
 	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), true);
 	accept();
+}
+
+void OBSRestreamActions::OpenRestreamDashboard()
+{
+	QDesktopServices::openUrl(QString("https://app.restream.io/"));
 }
