@@ -88,11 +88,10 @@ try {
 		throw ErrorInfo(error, json["error_description"].string_value());
 
 	auto items = json.array_items();
-	for (auto item : items) {
-		QString status = QString::fromStdString(item["status"].string_value());
-		if (status != "upcoming")
-			continue;
+	if (!items.size())
+		throw ErrorInfo("Failed to get upcoming events info from remote", "Event list is empty");
 
+	for (auto item : items) {
 		RestreamEventDescription event;
 		event.id = QString::fromStdString(item["id"].string_value());
 		event.title = QString::fromStdString(item["title"].string_value());
