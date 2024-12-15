@@ -4,17 +4,26 @@
 
 class BrowserDock;
 
+struct RestreamEventDescription {
+	QString id;
+	QString title;
+	qint64 scheduledFor;
+	QString showId;
+};
+
 class RestreamAuth : public OAuthStreamKey {
 	Q_OBJECT
 
 	bool uiLoaded = false;
+	QString currentShowId = "";
+	QCefWidget *chatWidgetBrowser = NULL;
+	QCefWidget *titlesWidgetBrowser = NULL;
+	QCefWidget *channelWidgetBrowser = NULL;
 
 	virtual bool RetryLogin() override;
 
 	virtual void SaveInternal() override;
 	virtual bool LoadInternal() override;
-
-	bool GetChannelInfo();
 
 	virtual void LoadUI() override;
 
@@ -22,5 +31,12 @@ public:
 	RestreamAuth(const Def &d);
 	~RestreamAuth();
 
+	bool GetBroadcastInfo(QVector<RestreamEventDescription> &events);
+	bool GetBroadcastKey(QString id, QString &key_out);
+	void UseBroadcastKey(QString key, QString show_id);
+	QString GetCurrentShowId();
+
 	static std::shared_ptr<Auth> Login(QWidget *parent, const std::string &service_name);
 };
+
+bool IsRestreamService(const std::string &service);
