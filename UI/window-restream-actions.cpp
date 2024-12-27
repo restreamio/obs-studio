@@ -47,12 +47,14 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 	this->UpdateBroadcastList(events);
 }
 
-OBSRestreamActions::~OBSRestreamActions() {
+OBSRestreamActions::~OBSRestreamActions()
+{
 	if (eventFilter)
 		App()->removeEventFilter(eventFilter);
 }
 
-void OBSRestreamActions::UpdateBroadcastList(QVector<RestreamEventDescription>& events) {
+void OBSRestreamActions::UpdateBroadcastList(QVector<RestreamEventDescription> &events)
+{
 	if (events.isEmpty()) {
 		RestreamEventDescription event;
 		event.id = "";

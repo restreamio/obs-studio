@@ -181,7 +181,8 @@ try {
 	return "";
 }
 
-void RestreamAuth::ResetShow() {
+void RestreamAuth::ResetShow()
+{
 	this->key_ = "";
 	this->showId = "";
 }
@@ -232,7 +233,8 @@ std::string RestreamAuth::GetShowId()
 	return showId;
 }
 
-bool RestreamAuth::IsBroadcastReady() {
+bool RestreamAuth::IsBroadcastReady()
+{
 	return !key_.empty();
 }
 
@@ -288,7 +290,6 @@ void RestreamAuth::LoadUI()
 
 		SelectShow(foundEventId, foundShowId);
 	}
-
 
 #ifdef BROWSER_AVAILABLE
 	if (!cef)
@@ -431,3 +432,4 @@ bool IsRestreamService(const std::string &service)
 {
 	return service == restreamDef.service;
 }
+
