@@ -19,7 +19,7 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 {
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-	eventFilter = new OBSEventFilter([this](QObject *obj, QEvent *event) {
+	eventFilter = new OBSEventFilter([this](QObject *, QEvent *event) {
 		if (event->type() == QEvent::ApplicationActivate) {
 			auto events = this->restreamAuth->GetBroadcastInfo();
 			this->UpdateBroadcastList(events);
