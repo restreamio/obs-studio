@@ -6484,31 +6484,17 @@ void OBSBasic::ShowYouTubeAutoStartWarning()
 #endif
 
 #ifdef RESTREAM_ENABLED
-void OBSBasic::RestreamActionDialogOk(const QString &broadcast_id, const QString &key, const QString show_id,
-				      bool start_now)
+void OBSBasic::RestreamActionDialogOk(bool start_now)
 {
-	//blog(LOG_DEBUG, "Stream key: %s", QT_TO_UTF8(key));
-	obs_service_t *service_obj = GetService();
-	OBSDataAutoRelease settings = obs_service_get_settings(service_obj);
-
-	const std::string a_key = QT_TO_UTF8(key);
-	obs_data_set_string(settings, "key", a_key.c_str());
-
-	const std::string e_id = QT_TO_UTF8(broadcast_id);
-	obs_data_set_string(settings, "broadcast_id", e_id.c_str());
-	//obs_data_set_string(settings, "stream_id", e_id.c_str());
-
 	auto *restreamAuth = dynamic_cast<RestreamAuth *>(GetAuth());
-	restreamAuth->UseBroadcastKey(key, show_id);
 
-	obs_service_update(service_obj, settings);
 	autoStartBroadcast = true;
 	autoStopBroadcast = true;
-	broadcastReady = true;
+	broadcastReady = restreamAuth->IsBroadcastReady();
 
 	emit BroadcastStreamReady(broadcastReady);
 
-	if (start_now)
+	if (broadcastReady && start_now)
 		QMetaObject::invokeMethod(this, "StartStreaming");
 }
 #endif
@@ -6646,6 +6632,14 @@ void OBSBasic::BroadcastButtonClicked()
 		broadcastActive = false;
 		broadcastReady = false;
 
+#ifdef RESTREAM_ENABLED
+		Auth *const auth = GetAuth();
+		if (IsRestreamService(auth->service())) {
+			auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
+			broadcastReady = restreamAuth->IsBroadcastReady();
+		}
+#endif
+
 		autoStopBroadcast = true;
 		QMetaObject::invokeMethod(this, "StopStreaming");
 		emit BroadcastStreamReady(broadcastReady);
@@ -6656,6 +6650,15 @@ void OBSBasic::BroadcastButtonClicked()
 void OBSBasic::SetBroadcastFlowEnabled(bool enabled)
 {
 	emit BroadcastFlowEnabled(enabled);
+
+#ifdef RESTREAM_ENABLED
+	Auth *const auth = GetAuth();
+	if (IsRestreamService(auth->service())) {
+		auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
+		broadcastReady = restreamAuth->IsBroadcastReady();
+		emit BroadcastStreamReady(broadcastReady);
+	}
+#endif
 }
 
 void OBSBasic::SetupBroadcast()
@@ -6673,6 +6676,7 @@ void OBSBasic::SetupBroadcast()
 #endif
 #ifdef RESTREAM_ENABLED
 	if (IsRestreamService(auth->service())) {
+
 		OBSRestreamActions dialog(this, auth, broadcastReady);
 		connect(&dialog, &OBSRestreamActions::ok, this, &OBSBasic::RestreamActionDialogOk);
 		dialog.exec();

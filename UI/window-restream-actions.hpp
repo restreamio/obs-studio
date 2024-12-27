@@ -14,10 +14,10 @@ class OBSRestreamActions : public QDialog {
 	std::unique_ptr<Ui::OBSRestreamActions> ui;
 
 signals:
-	void ok(const QString &event_id, const QString &key, const QString &show_id, bool start_now);
+	void ok(bool start_now);
 
 protected:
-	void UpdateOkButtonStatus();
+	void EnableOkButton(bool state);
 
 public:
 	explicit OBSRestreamActions(QWidget *parent, Auth *auth, bool broadcastReady);
@@ -26,6 +26,7 @@ public:
 	bool Valid() { return valid; };
 
 private:
+	void UpdateBroadcastList(QVector<RestreamEventDescription> &newEvents);
 	void BroadcastSelectAction();
 	void BroadcastSelectAndStartAction();
 	void OpenRestreamDashboard();
@@ -34,8 +35,9 @@ private:
 	void SetPlaceholder(const QIcon &icon) { thumbPlaceholder = icon; }
 
 	RestreamAuth *restreamAuth;
-	QString selectedBroadcastId;
-	QString selectedShowId;
+	OBSEventFilter *eventFilter;
+	std::string selectedEventId;
+	std::string selectedShowId;
 	bool broadcastReady;
 	bool valid = false;
 	QIcon thumbPlaceholder;

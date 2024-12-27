@@ -18,9 +18,20 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 	  broadcastReady(broadcastReady)
 {
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-	ui->setupUi(this);
 
-	UpdateOkButtonStatus();
+	eventFilter = new OBSEventFilter([this](QObject *obj, QEvent *event) {
+		if (event->type() == QEvent::ApplicationActivate) {
+			auto events = this->restreamAuth->GetBroadcastInfo();
+			this->UpdateBroadcastList(events);
+		}
+		return false;
+	});
+
+	App()->installEventFilter(eventFilter);
+
+	ui->setupUi(this);
+	ui->okButton->setEnabled(false);
+	ui->saveButton->setEnabled(false);
 
 	connect(ui->okButton, &QPushButton::clicked, this, &OBSRestreamActions::BroadcastSelectAndStartAction);
 	connect(ui->saveButton, &QPushButton::clicked, this, &OBSRestreamActions::BroadcastSelectAction);
@@ -32,17 +43,60 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 
 	qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
 
-	QVector<RestreamEventDescription> events;
-	if (!restreamAuth->GetBroadcastInfo(events)) {
+	auto events = restreamAuth->GetBroadcastInfo();
+	this->UpdateBroadcastList(events);
+}
+
+OBSRestreamActions::~OBSRestreamActions() {
+	if (eventFilter)
+		App()->removeEventFilter(eventFilter);
+}
+
+void OBSRestreamActions::UpdateBroadcastList(QVector<RestreamEventDescription>& events) {
+	if (events.isEmpty()) {
 		RestreamEventDescription event;
-		event.id = QString("default");
-		event.title = QString("Live with Restream");
+		event.id = "";
+		event.title = "Live with Restream";
 		event.scheduledFor = 0;
-		event.showId = QString("");
+		event.showId = "";
 		events.push_back(event);
 	}
 
-	auto currentShowId = restreamAuth->GetCurrentShowId();
+	auto tryToFindShowId = selectedShowId;
+	if (tryToFindShowId.empty())
+		tryToFindShowId = restreamAuth->GetShowId();
+
+	selectedEventId = "";
+	selectedShowId = "";
+
+	qDeleteAll(ui->scrollAreaWidgetContents->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly));
+	EnableOkButton(false);
+
+	for (auto event : events) {
+		if (event.showId == tryToFindShowId) {
+			selectedEventId = event.id;
+			selectedShowId = event.showId;
+
+			EnableOkButton(true);
+			break;
+		}
+	}
+
+	if (selectedShowId.empty()) {
+		if (events.size()) {
+			auto event = events.at(0);
+			selectedEventId = event.id;
+			selectedShowId = event.showId;
+
+			restreamAuth->SelectShow(selectedEventId, selectedShowId);
+
+			EnableOkButton(true);
+			emit ok(false);
+		} else {
+			restreamAuth->ResetShow();
+			emit ok(false);
+		}
+	}
 
 	for (auto event : events) {
 		ClickableLabel *label = new ClickableLabel();
@@ -58,10 +112,11 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 							       QLocale().timeFormat(QLocale::ShortFormat)));
 
 			label->setText(QString("<big>%1</big><br>%2: %3")
-					       .arg(event.title, QTStr("Restream.Actions.BroadcastScheduled"),
-						    scheduledForString));
+					       .arg(QString::fromStdString(event.title),
+						    QTStr("Restream.Actions.BroadcastScheduled"), scheduledForString));
 		} else {
-			label->setText(QString("<big>%1</big>%2").arg(event.title, scheduledForString));
+			label->setText(
+				QString("<big>%1</big>%2").arg(QString::fromStdString(event.title), scheduledForString));
 		}
 
 		connect(label, &ClickableLabel::clicked, this, [&, label, event]() {
@@ -76,53 +131,40 @@ OBSRestreamActions::OBSRestreamActions(QWidget *parent, Auth *auth, bool broadca
 			label->style()->unpolish(label);
 			label->style()->polish(label);
 
-			selectedBroadcastId = event.id;
+			selectedEventId = event.id;
 			selectedShowId = event.showId;
 
-			UpdateOkButtonStatus();
+			EnableOkButton(true);
 		});
 
 		ui->scrollAreaWidgetContents->layout()->addWidget(label);
 
-		if (broadcastReady && event.showId == currentShowId) {
+		if (event.showId == selectedShowId) {
 			label->setProperty("class", "row-selected");
 			label->style()->unpolish(label);
 			label->style()->polish(label);
-
-			selectedBroadcastId = event.id;
-			selectedShowId = event.showId;
-
-			UpdateOkButtonStatus();
 		}
 	}
 }
 
-OBSRestreamActions::~OBSRestreamActions() {}
 
-void OBSRestreamActions::UpdateOkButtonStatus()
+void OBSRestreamActions::EnableOkButton(bool state)
 {
-	bool enable = !selectedBroadcastId.isEmpty();
-	ui->okButton->setEnabled(enable);
-	ui->saveButton->setEnabled(enable);
+	ui->okButton->setEnabled(state);
+	ui->saveButton->setEnabled(state);
 }
 
 void OBSRestreamActions::BroadcastSelectAction()
 {
-	QString streamKey;
-	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey))
-		return;
-
-	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), false);
+	restreamAuth->SelectShow(selectedEventId, selectedShowId);
+	emit ok(false);
 	accept();
 }
 
 void OBSRestreamActions::BroadcastSelectAndStartAction()
 {
-	QString streamKey;
-	if (!restreamAuth->GetBroadcastKey(selectedBroadcastId, streamKey))
-		return;
-
-	emit ok(QT_TO_UTF8(selectedBroadcastId), QT_TO_UTF8(streamKey), QT_TO_UTF8(selectedShowId), true);
+	restreamAuth->SelectShow(selectedEventId, selectedShowId);
+	emit ok(true);
 	accept();
 }
 

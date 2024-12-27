@@ -637,7 +637,7 @@ private:
 				   bool autostart, bool autostop, bool start_now);
 #endif
 #ifdef RESTREAM_ENABLED
-	void RestreamActionDialogOk(const QString &event_id, const QString &key, const QString show_id, bool start_now);
+	void RestreamActionDialogOk(bool start_now);
 #endif
 	void BroadcastButtonClicked();
 	void SetBroadcastFlowEnabled(bool enabled);
