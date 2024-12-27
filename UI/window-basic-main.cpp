@@ -6634,7 +6634,7 @@ void OBSBasic::BroadcastButtonClicked()
 
 #ifdef RESTREAM_ENABLED
 		Auth *const auth = GetAuth();
-		if (IsRestreamService(auth->service())) {
+		if (auth && IsRestreamService(auth->service())) {
 			auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
 			broadcastReady = restreamAuth->IsBroadcastReady();
 		}
@@ -6653,7 +6653,7 @@ void OBSBasic::SetBroadcastFlowEnabled(bool enabled)
 
 #ifdef RESTREAM_ENABLED
 	Auth *const auth = GetAuth();
-	if (IsRestreamService(auth->service())) {
+	if (auth && IsRestreamService(auth->service())) {
 		auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
 		broadcastReady = restreamAuth->IsBroadcastReady();
 		emit BroadcastStreamReady(broadcastReady);
@@ -6667,7 +6667,7 @@ void OBSBasic::SetupBroadcast()
 	Auth *const auth = GetAuth();
 #endif
 #ifdef YOUTUBE_ENABLED
-	if (IsYouTubeService(auth->service())) {
+	if (auth && IsYouTubeService(auth->service())) {
 		OBSYoutubeActions dialog(this, auth, broadcastReady);
 		connect(&dialog, &OBSYoutubeActions::ok, this, &OBSBasic::YouTubeActionDialogOk);
 		dialog.exec();
@@ -6675,7 +6675,7 @@ void OBSBasic::SetupBroadcast()
 	}
 #endif
 #ifdef RESTREAM_ENABLED
-	if (IsRestreamService(auth->service())) {
+	if (auth && IsRestreamService(auth->service())) {
 
 		OBSRestreamActions dialog(this, auth, broadcastReady);
 		connect(&dialog, &OBSRestreamActions::ok, this, &OBSBasic::RestreamActionDialogOk);
