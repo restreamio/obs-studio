@@ -68,6 +68,9 @@
 #include "window-youtube-actions.hpp"
 #include "youtube-api-wrappers.hpp"
 #endif
+#ifdef RESTREAM_ENABLED
+#include "window-restream-actions.hpp"
+#endif
 #include "window-whats-new.hpp"
 #include "context-bar-controls.hpp"
 #include "obs-proxy-style.hpp"
@@ -6480,6 +6483,22 @@ void OBSBasic::ShowYouTubeAutoStartWarning()
 }
 #endif
 
+#ifdef RESTREAM_ENABLED
+void OBSBasic::RestreamActionDialogOk(bool start_now)
+{
+	auto *restreamAuth = dynamic_cast<RestreamAuth *>(GetAuth());
+
+	autoStartBroadcast = true;
+	autoStopBroadcast = true;
+	broadcastReady = restreamAuth->IsBroadcastReady();
+
+	emit BroadcastStreamReady(broadcastReady);
+
+	if (broadcastReady && start_now)
+		QMetaObject::invokeMethod(this, "StartStreaming");
+}
+#endif
+
 void OBSBasic::StartStreaming()
 {
 	if (outputHandler->StreamingActive())
@@ -6613,6 +6632,14 @@ void OBSBasic::BroadcastButtonClicked()
 		broadcastActive = false;
 		broadcastReady = false;
 
+#ifdef RESTREAM_ENABLED
+		Auth *const auth = GetAuth();
+		if (auth && IsRestreamService(auth->service())) {
+			auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
+			broadcastReady = restreamAuth->IsBroadcastReady();
+		}
+#endif
+
 		autoStopBroadcast = true;
 		QMetaObject::invokeMethod(this, "StopStreaming");
 		emit BroadcastStreamReady(broadcastReady);
@@ -6623,16 +6650,37 @@ void OBSBasic::BroadcastButtonClicked()
 void OBSBasic::SetBroadcastFlowEnabled(bool enabled)
 {
 	emit BroadcastFlowEnabled(enabled);
+
+#ifdef RESTREAM_ENABLED
+	Auth *const auth = GetAuth();
+	if (auth && IsRestreamService(auth->service())) {
+		auto restreamAuth = dynamic_cast<RestreamAuth *>(auth);
+		broadcastReady = restreamAuth->IsBroadcastReady();
+		emit BroadcastStreamReady(broadcastReady);
+	}
+#endif
 }
 
 void OBSBasic::SetupBroadcast()
 {
-#ifdef YOUTUBE_ENABLED
+#if defined YOUTUBE_ENABLED || defined RESTREAM_ENABLED
 	Auth *const auth = GetAuth();
-	if (IsYouTubeService(auth->service())) {
+#endif
+#ifdef YOUTUBE_ENABLED
+	if (auth && IsYouTubeService(auth->service())) {
 		OBSYoutubeActions dialog(this, auth, broadcastReady);
 		connect(&dialog, &OBSYoutubeActions::ok, this, &OBSBasic::YouTubeActionDialogOk);
 		dialog.exec();
+		return;
+	}
+#endif
+#ifdef RESTREAM_ENABLED
+	if (auth && IsRestreamService(auth->service())) {
+
+		OBSRestreamActions dialog(this, auth, broadcastReady);
+		connect(&dialog, &OBSRestreamActions::ok, this, &OBSBasic::RestreamActionDialogOk);
+		dialog.exec();
+		return;
 	}
 #endif
 }
@@ -6947,6 +6995,12 @@ void OBSBasic::StreamingStop(int code, QString last_error)
 #ifdef YOUTUBE_ENABLED
 	if (YouTubeAppDock::IsYTServiceSelected())
 		youtubeAppDock->IngestionStopped();
+#endif
+
+#ifdef RESTREAM_ENABLED
+	Auth *const auth = GetAuth();
+	if (auth && IsRestreamService(auth->service()))
+		broadcastActive = false;
 #endif
 
 	blog(LOG_INFO, STREAMING_STOP);
