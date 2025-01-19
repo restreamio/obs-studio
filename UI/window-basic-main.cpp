@@ -6997,6 +6997,12 @@ void OBSBasic::StreamingStop(int code, QString last_error)
 		youtubeAppDock->IngestionStopped();
 #endif
 
+#ifdef RESTREAM_ENABLED
+	Auth *const auth = GetAuth();
+	if (auth && IsRestreamService(auth->service()))
+		broadcastActive = false;
+#endif
+
 	blog(LOG_INFO, STREAMING_STOP);
 
 	if (encode_error) {
