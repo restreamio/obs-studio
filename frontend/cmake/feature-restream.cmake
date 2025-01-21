@@ -1,8 +1,8 @@
 if(RESTREAM_CLIENTID AND RESTREAM_HASH MATCHES "^(0|[a-fA-F0-9]+)$" AND TARGET OBS::browser-panels)
   target_sources(
-    obs-studio 
-    PRIVATE 
-      oauth/RestreamAuth.cpp 
+    obs-studio
+    PRIVATE
+      oauth/RestreamAuth.cpp
       oauth/RestreamAuth.hpp
       forms/OBSRestreamActions.ui
       dialogs/OBSRestreamActions.cpp
