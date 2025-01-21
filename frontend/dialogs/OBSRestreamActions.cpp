@@ -1,10 +1,7 @@
-#include "OBSYoutubeActions.hpp"
+#include "OBSRestreamActions.hpp"
 
 #include <widgets/OBSBasic.hpp>
 #include <utility/OBSEventFilter.hpp>
-
-//#include "window-basic-main.hpp"
-//#include "obs-app.hpp"
 
 #include <qt-wrappers.hpp>
 #include <QToolTip>
