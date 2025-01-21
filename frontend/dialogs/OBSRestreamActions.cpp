@@ -154,7 +154,6 @@ void OBSRestreamActions::UpdateBroadcastList(QVector<RestreamEventDescription> &
 	}
 }
 
-
 void OBSRestreamActions::EnableOkButton(bool state)
 {
 	ui->okButton->setEnabled(state);
