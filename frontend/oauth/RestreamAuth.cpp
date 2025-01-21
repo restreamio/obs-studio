@@ -422,4 +422,3 @@ bool IsRestreamService(const std::string &service)
 {
 	return service == restreamDef.service;
 }
-
