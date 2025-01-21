@@ -5,14 +5,11 @@
 #include <utility/RemoteTextThread.hpp>
 #include <utility/obf.h>
 #include <widgets/OBSBasic.hpp>
-
 #include <qt-wrappers.hpp>
 #include <ui-config.h>
-
 #include <json11.hpp>
 
 #include "moc_RestreamAuth.cpp"
-//#include "window-restream-actions.hpp"
 
 using namespace json11;
 
@@ -273,11 +270,6 @@ void RestreamAuth::LoadUI()
 				foundShowId = event.showId;
 				break;
 			}
-
-			//if (foundEventId.empty() && event.title == "Live with Restream") {
-			//	foundEventId = event.id;
-			//	foundShowId = event.showId;
-			//}
 		}
 
 		if (foundShowId.empty() && events.size()) {
