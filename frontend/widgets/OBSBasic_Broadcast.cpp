@@ -34,10 +34,10 @@ using namespace std;
 
 void OBSBasic::BroadcastButtonClicked()
 {
-//	if (!broadcastReady || (!broadcastActive && !outputHandler->StreamingActive())) {
-//		SetupBroadcast();
-//		return;
-//	}
+	if (!broadcastReady || (!broadcastActive && !outputHandler->StreamingActive())) {
+		SetupBroadcast();
+		return;
+	}
 
 	if (!autoStartBroadcast) {
 #ifdef YOUTUBE_ENABLED
