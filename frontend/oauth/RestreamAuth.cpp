@@ -88,8 +88,11 @@ try {
 		throw ErrorInfo(error, json["error_description"].string_value());
 
 	auto items = json.array_items();
-	if (!items.size())
-		throw ErrorInfo("Failed to get upcoming events info from remote", "Event list is empty");
+	if (!items.size()) {
+		OBSMessageBox::warning(OBSBasic::Get(), QTStr("Restream.Actions.BroadcastLoadingFailureTitle"),
+				       QTStr("Restream.Actions.BroadcastLoadingEmptyText"));
+		return QVector<RestreamEventDescription>();
+	}
 
 	for (auto item : items) {
 		RestreamEventDescription event;
@@ -110,11 +113,8 @@ try {
 	QString title = QTStr("Restream.Actions.BroadcastLoadingFailureTitle");
 	QString text = QTStr("Restream.Actions.BroadcastLoadingFailureText")
 			       .arg(service(), info.message.c_str(), info.error.c_str());
-
 	QMessageBox::warning(OBSBasic::Get(), title, text);
-
 	blog(LOG_WARNING, "%s: %s: %s", __FUNCTION__, info.message.c_str(), info.error.c_str());
-
 	return QVector<RestreamEventDescription>();
 }
 
@@ -169,9 +169,7 @@ try {
 	QString title = QTStr("Restream.Actions.BroadcastLoadingFailureTitle");
 	QString text = QTStr("Restream.Actions.BroadcastLoadingFailureText")
 			       .arg(service(), info.message.c_str(), info.error.c_str());
-
 	QMessageBox::warning(OBSBasic::Get(), title, text);
-
 	blog(LOG_WARNING, "%s: %s: %s", __FUNCTION__, info.message.c_str(), info.error.c_str());
 	return "";
 }
