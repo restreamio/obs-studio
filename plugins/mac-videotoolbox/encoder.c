@@ -576,19 +576,19 @@ static OSStatus create_encoder(struct vt_encoder *enc)
 			return code;
 		}
 
-		if (__builtin_available(macOS 15.0, *)) {
-			int spatial_aq = enc->spatial_aq ? kVTQPModulationLevel_Default : kVTQPModulationLevel_Disable;
-			CFNumberRef spatialAQ = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &spatial_aq);
-
-			code = VTSessionSetProperty(s, kVTCompressionPropertyKey_SpatialAdaptiveQPLevel, spatialAQ);
-
-			if (code != noErr) {
-				log_osstatus(LOG_WARNING, enc,
-					     "setting kVTCompressionPropertyKey_SpatialAdaptiveQPLevel failed", code);
-			}
-
-			CFRelease(spatialAQ);
-		}
+//		if (__builtin_available(macOS 15.0, *)) {
+//			int spatial_aq = enc->spatial_aq ? kVTQPModulationLevel_Default : kVTQPModulationLevel_Disable;
+//			CFNumberRef spatialAQ = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &spatial_aq);
+//
+//			code = VTSessionSetProperty(s, kVTCompressionPropertyKey_SpatialAdaptiveQPLevel, spatialAQ);
+//
+//			if (code != noErr) {
+//				log_osstatus(LOG_WARNING, enc,
+//					     "setting kVTCompressionPropertyKey_SpatialAdaptiveQPLevel failed", code);
+//			}
+//
+//			CFRelease(spatialAQ);
+//		}
 	}
 
 	// This can fail depending on hardware configuration
