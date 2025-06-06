@@ -89,6 +89,7 @@ function(set_target_properties_obs target)
 
       if ("${obs_executables}")
         add_dependencies(${target} ${obs_executables})
+      endif()
 
       foreach(executable IN LISTS obs_executables)
         set_target_xcode_properties(${executable} PROPERTIES INSTALL_PATH
