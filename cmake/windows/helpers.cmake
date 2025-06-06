@@ -238,6 +238,8 @@ function(_target_install_obs target)
     if(target_type STREQUAL EXECUTABLE)
       install(TARGETS ${target} RUNTIME DESTINATION "${_TIO_DESTINATION}" COMPONENT Runtime)
     elseif(target_type STREQUAL SHARED_LIBRARY)
+      message(STATUS "Destination exe: ${_TIO_DESTINATION}, lib: ${_TIO_LIBRARY_DESTINATION}, header: ${_TIO_HEADER_DESTINATION}")
+
       if(NOT _TIO_LIBRARY_DESTINATION)
         set(_TIO_LIBRARY_DESTINATION ${_TIO_DESTINATION})
       endif()
