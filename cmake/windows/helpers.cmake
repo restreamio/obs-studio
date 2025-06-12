@@ -232,7 +232,7 @@ function(_target_install_obs target)
   else()
     set(target_file "$<TARGET_FILE:${target}>")
     set(target_pdb_file "$<TARGET_PDB_FILE:${target}>")
-    set(comment "Copy ${target} to destination: ${_TIO_DESTINATION}, lib: ${_TIO_LIBRARY_DESTINATION}, header: ${_TIO_HEADER_DESTINATION}")
+    set(comment "Copy ${target} to destination: ${_TIO_DESTINATION}, libs: ${_TIO_LIBRARY_DESTINATION}, headers: ${_TIO_HEADER_DESTINATION}")
 
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL EXECUTABLE)
