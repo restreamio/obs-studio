@@ -176,9 +176,10 @@ package() {
         }
 
         xcrun notarytool store-credentials 'OBS-Codesign-Password' --apple-id "${CODESIGN_IDENT_USER}" --team-id "${CODESIGN_TEAM}" --password "${CODESIGN_IDENT_PASS}"
-        xcrun_output = $(xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait | tee /dev/tty)
+        xcrun_output = $(xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait)
         submission_id = $(echo "${xcrun_output}" | awk '/id: / {print $2; exit }')
-        echo "Duplicate submission output: ${xcrun_output}"
+
+        echo "Submission output: ${xcrun_output}"
         echo "Submission ID: ${submission_id}"
 
         clean_id = "${submission_id//-/,}"
