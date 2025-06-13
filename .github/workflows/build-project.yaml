@@ -51,11 +51,16 @@ jobs:
             *) ;;
           esac
 
+          print '::group::Check event result'
+
           for config in "${config_data[@]}"; do
             IFS=':' read -r key value <<< "${config}"
             echo "${key}=${value}" >> $GITHUB_OUTPUT
+            print '${key}=${value}'
           done
+          
           echo "commitHash=${GITHUB_SHA:0:9}" >> $GITHUB_OUTPUT
+          print '::endgroup::'
 
   macos-build:
     name: macOS 🍏
