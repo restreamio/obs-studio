@@ -176,7 +176,13 @@ package() {
         }
 
         xcrun notarytool store-credentials 'OBS-Codesign-Password' --apple-id "${CODESIGN_IDENT_USER}" --team-id "${CODESIGN_TEAM}" --password "${CODESIGN_IDENT_PASS}"
-        xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait
+        xcrun_output = $(xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait | tee /dev/tty)
+        submission_id = $(echo "${xcrun_output}" | awk '/id: / {print $2; exit }')
+        echo "Duplicate submission output: ${xcrun_output}"
+        echo "Submission ID: ${submission_id}"
+
+        clean_id = "${submission_id//-/,}"
+        echo "Cleaned Submission: ${clean_id}"
 
         local -i _status=0
 
@@ -184,6 +190,8 @@ package() {
 
         if (( _status )) {
           log_error "Notarization failed. Use 'xcrun notarytool log <submission ID>' to check errors."
+
+          xcrun notarytool log "${output_name}"
           return 2
         }
       }
