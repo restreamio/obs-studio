@@ -155,6 +155,24 @@ package() {
 
       local -i _status=0
 
+      # Deep sign all libraries and frameworks before creating disk image
+      if (( codesign )) {
+        log_group "Deep signing application bundle..."
+        typeset -gx CODESIGN_IDENT="${CODESIGN_IDENT:--}"
+        typeset -gx CODESIGN_TEAM="$(print "${CODESIGN_IDENT}" | /usr/bin/sed -En 's/.+\((.+)\)/\1/p')"
+        
+        local entitlements_file="${project_root}/cmake/macos/entitlements.plist"
+        
+        # Sign all dylibs, frameworks, and executables
+        find obs-studio/OBS.app -type f \( -name "*.dylib" -o -name "*.so" -o -name "*.framework" \) -exec codesign --force --verify --verbose --sign "${CODESIGN_IDENT}" --timestamp --options runtime --entitlements "${entitlements_file}" {} \;
+        
+        # Sign all executables
+        find obs-studio/OBS.app -type f -perm +111 -exec codesign --force --verify --verbose --sign "${CODESIGN_IDENT}" --timestamp --options runtime --entitlements "${entitlements_file}" {} \;
+        
+        # Sign the main app bundle
+        codesign --force --verify --verbose --sign "${CODESIGN_IDENT}" --timestamp --options runtime --entitlements "${entitlements_file}" obs-studio/OBS.app
+      }
+
       autoload -Uz create_diskimage
       create_diskimage obs-studio ${volume_name} ${output_name} || _status=1
 
@@ -167,7 +185,9 @@ package() {
       typeset -gx CODESIGN_IDENT="${CODESIGN_IDENT:--}"
       typeset -gx CODESIGN_TEAM="$(print "${CODESIGN_IDENT}" | /usr/bin/sed -En 's/.+\((.+)\)/\1/p')"
 
-      codesign --sign "${CODESIGN_IDENT}" ${output_name}.dmg
+      if (( codesign )) {
+        codesign --force --verify --verbose --sign "${CODESIGN_IDENT}" --timestamp ${output_name}.dmg
+      }
 
       if (( codesign && notarize )) {
         if ! [[ ${CODESIGN_IDENT} != '-' && ${CODESIGN_TEAM} && ${CODESIGN_IDENT_USER} && ${CODESIGN_IDENT_PASS} ]] {
