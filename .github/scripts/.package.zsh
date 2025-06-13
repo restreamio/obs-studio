@@ -178,16 +178,16 @@ package() {
         xcrun notarytool store-credentials 'OBS-Codesign-Password' --apple-id "${CODESIGN_IDENT_USER}" --team-id "${CODESIGN_TEAM}" --password "${CODESIGN_IDENT_PASS}"
 
         local xcrun_output
-        xcrun_output = $(xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait)
+        xcrun_output=$(xcrun notarytool submit "${output_name}".dmg --keychain-profile "OBS-Codesign-Password" --wait)
 
         local submission_id
-        submission_id = $(echo "${xcrun_output}" | awk '/id: / {print $2; exit }')
+        submission_id=$(echo "${xcrun_output}" | awk '/id: / {print $2; exit }')
 
         echo "Submission output: ${xcrun_output}"
         echo "Submission ID: ${submission_id}"
 
         local clean_id
-        clean_id = "${submission_id//-/,}"
+        clean_id="${submission_id//-/,}"
         echo "Cleaned Submission: ${clean_id}"
 
         local -i _status=0
