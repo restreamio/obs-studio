@@ -10,5 +10,10 @@
 	<string>Developer ID Application</string>
 	<key>teamID</key>
 	<string>${OBS_CODESIGN_TEAM}</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>OBS.app</key>
+		<string>${MACOS_SIGNING_PROVISIONING_PROFILE}</string>
+	</dict>
 </dict>
 </plist>
