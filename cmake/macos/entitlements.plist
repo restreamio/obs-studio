@@ -18,5 +18,7 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
+	<key>com.apple.security.system-extension.install</key>
+	<true/>
 </dict>
 </plist>
