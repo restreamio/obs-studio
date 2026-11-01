@@ -239,15 +239,10 @@ static void *enc_create(obs_data_t *settings, obs_encoder_t *encoder, const char
 	const enum AVSampleFormat *sample_fmts = NULL;
 	const int *supported_samplerates = NULL;
 
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 13, 100)
-	sample_fmts = enc->codec->sample_fmts;
-	supported_samplerates = enc->codec->supported_samplerates;
-#else
 	avcodec_get_supported_config(enc->context, enc->codec, AV_CODEC_CONFIG_SAMPLE_FORMAT, 0,
 				     (const void **)&sample_fmts, NULL);
 	avcodec_get_supported_config(enc->context, enc->codec, AV_CODEC_CONFIG_SAMPLE_RATE, 0,
 				     (const void **)&supported_samplerates, NULL);
-#endif
 
 	if (sample_fmts) {
 		/* Check if the requested format is actually available for the specified
@@ -456,6 +451,12 @@ static size_t enc_frame_size(void *data)
 	return enc->frame_size;
 }
 
+static uint32_t enc_initial_padding(void *data)
+{
+	struct enc_encoder *enc = data;
+	return enc->context->initial_padding;
+}
+
 struct obs_encoder_info aac_encoder_info = {
 	.id = "ffmpeg_aac",
 	.type = OBS_ENCODER_AUDIO,
@@ -469,6 +470,7 @@ struct obs_encoder_info aac_encoder_info = {
 	.get_properties = enc_properties,
 	.get_extra_data = enc_extra_data,
 	.get_audio_info = enc_audio_info,
+	.get_priming_samples = enc_initial_padding,
 };
 
 struct obs_encoder_info opus_encoder_info = {
@@ -484,6 +486,7 @@ struct obs_encoder_info opus_encoder_info = {
 	.get_properties = enc_properties,
 	.get_extra_data = enc_extra_data,
 	.get_audio_info = enc_audio_info,
+	.get_priming_samples = enc_initial_padding,
 };
 
 struct obs_encoder_info pcm_encoder_info = {

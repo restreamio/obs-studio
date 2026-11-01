@@ -9,21 +9,20 @@ if(NOT XCODE)
   message(FATAL_ERROR "Building OBS Studio on macOS requires Xcode generator.")
 endif()
 
-include(ccache)
+enable_language(Swift)
+
 include(compiler_common)
 
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-fopenmp-simd>")
 
-# Enable selection between arm64 and x86_64 targets
-if(NOT CMAKE_OSX_ARCHITECTURES)
-  set(CMAKE_OSX_ARCHITECTURES arm64 CACHE STRING "Build architectures for macOS" FORCE)
+if(CMAKE_CXX_STANDARD GREATER_EQUAL 20)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fno-char8_t>)
 endif()
-set_property(CACHE CMAKE_OSX_ARCHITECTURES PROPERTY STRINGS arm64 x86_64)
 
 # Ensure recent enough Xcode and platform SDK
 function(check_sdk_requirements)
-  set(obs_macos_minimum_sdk 15.0) # Keep in sync with Xcode
-  set(obs_macos_minimum_xcode 16.0) # Keep in sync with SDK
+  set(obs_macos_minimum_sdk 26.5) # Keep in sync with Xcode
+  set(obs_macos_minimum_xcode 26.5) # Keep in sync with SDK
   execute_process(
     COMMAND xcrun --sdk macosx --show-sdk-platform-version
     OUTPUT_VARIABLE obs_macos_current_sdk
@@ -94,7 +93,7 @@ string(APPEND CMAKE_OBJCXX_FLAGS_RELEASE " -g")
 # * -Wno-non-virtual-dtor
 
 add_compile_definitions(
-  $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:$<$<CONFIG:DEBUG>:DEBUG>>
+  $<$<CONFIG:DEBUG>:DEBUG>
   $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:$<$<CONFIG:DEBUG>:_DEBUG>>
   $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SIMDE_ENABLE_OPENMP>
 )

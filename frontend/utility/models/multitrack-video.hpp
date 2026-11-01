@@ -18,6 +18,7 @@
 
 #include <string>
 #include <optional>
+#include <unordered_set>
 
 #include <obs.h>
 
@@ -94,7 +95,7 @@ using json = nlohmann::json;
 struct Client {
 	string name = "obs-studio";
 	string version;
-	std::vector<string> supported_codecs;
+	std::unordered_set<std::string> supported_codecs;
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Client, name, version, supported_codecs)
 };
@@ -248,11 +249,13 @@ struct VideoEncoderConfiguration {
 	optional<video_colorspace> colorspace;
 	optional<video_range_type> range;
 	optional<video_format> format;
+	optional<json> bitrate_interpolation_points;
 	json settings;
 	uint32_t canvas_index;
 
 	NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(VideoEncoderConfiguration, type, width, height, framerate,
-						    gpu_scale_type, colorspace, range, format, settings, canvas_index)
+						    gpu_scale_type, colorspace, range, format,
+						    bitrate_interpolation_points, settings, canvas_index)
 };
 
 struct AudioEncoderConfiguration {
